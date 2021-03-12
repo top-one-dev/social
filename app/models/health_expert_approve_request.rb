@@ -4,8 +4,8 @@
 # Table name: health_expert_approve_requests
 #
 #  id                :bigint(8)        not null, primary key
-#  account_id        :bigint(8)        not null
-#  target_account    :bigint(8)        not null
+#  account_id        :integer          not null
+#  target_account_id :integer          not null
 #  show_reblogs      :boolean          default(TRUE), not null
 #  uri               :string
 #  created_at        :datetime         not null

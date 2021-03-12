@@ -5,7 +5,7 @@
 #
 #  id                     :bigint(8)        not null, primary key
 #  account_id             :integer          not null
-#  training_certification :string           default("")
+#  training_certification :string           not null
 #  website_url            :string
 #  facebook_url           :string
 #  twitter_url            :string

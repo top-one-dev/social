@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_025617) do
+ActiveRecord::Schema.define(version: 2020_10_08_192810) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "account_conversations", force: :cascade do |t|
@@ -94,7 +93,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
     t.bigint "account_id"
     t.string "image_file_name"
     t.string "image_content_type"
-    t.bigint "image_file_size"
+    t.integer "image_file_size"
     t.datetime "image_updated_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -160,21 +159,20 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
     t.string "actor_type"
     t.boolean "discoverable"
     t.string "also_known_as", array: true
-    t.datetime "silenced_at"
-    t.datetime "suspended_at"
     t.boolean "is_pro", default: false, null: false
     t.datetime "pro_expires_at"
+    t.datetime "silenced_at"
+    t.datetime "suspended_at"
     t.boolean "is_verified", default: false, null: false
     t.boolean "is_proplus", default: false, null: false
     t.boolean "is_expert", default: false, null: false
-    t.string "subscription_plan"
     t.string "subscription_id"
     t.datetime "proplus_expires_at"
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
-    t.index ["is_expert"], name: "index_accounts_on_is_expert"
+    t.index ["is_expert"], name: "index_accounts_on_is_investor"
     t.index ["is_pro"], name: "index_accounts_on_is_pro"
-    t.index ["is_proplus"], name: "index_accounts_on_is_proplus"
+    t.index ["is_proplus"], name: "index_accounts_on_is_donor"
     t.index ["is_verified"], name: "index_accounts_on_is_verified"
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id"
     t.index ["uri"], name: "index_accounts_on_uri"
@@ -219,6 +217,13 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
     t.string "uri"
     t.index ["account_id", "target_account_id"], name: "index_blocks_on_account_id_and_target_account_id", unique: true
     t.index ["target_account_id"], name: "index_blocks_on_target_account_id"
+  end
+
+  create_table "boost_posts", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "btc_payments", force: :cascade do |t|
@@ -436,7 +441,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
 
   create_table "health_expert_application_requests", force: :cascade do |t|
     t.integer "account_id", null: false
-    t.string "training_certification", default: ""
+    t.string "training_certification", null: false
     t.string "website_url"
     t.string "facebook_url"
     t.string "twitter_url"
@@ -451,7 +456,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
 
   create_table "health_expert_applications", force: :cascade do |t|
     t.integer "account_id", null: false
-    t.string "training_certification", default: ""
+    t.string "training_certification", null: false
     t.string "website_url"
     t.string "facebook_url"
     t.string "twitter_url"
@@ -520,7 +525,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
   create_table "list_accounts", force: :cascade do |t|
     t.bigint "list_id", null: false
     t.bigint "account_id", null: false
-    t.bigint "follow_id", default: 1
+    t.bigint "follow_id"
     t.index ["account_id", "list_id"], name: "index_list_accounts_on_account_id_and_list_id", unique: true
     t.index ["follow_id"], name: "index_list_accounts_on_follow_id"
     t.index ["list_id", "account_id"], name: "index_list_accounts_on_list_id_and_account_id"
@@ -721,16 +726,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
     t.integer "state", default: 0, null: false
   end
 
-  create_table "report_notes", force: :cascade do |t|
-    t.text "content", null: false
-    t.bigint "report_id", null: false
-    t.bigint "account_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_report_notes_on_account_id"
-    t.index ["report_id"], name: "index_report_notes_on_report_id"
-  end
-
   create_table "reports", force: :cascade do |t|
     t.bigint "status_ids", default: [], null: false, array: true
     t.text "comment", default: "", null: false
@@ -813,8 +808,8 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
   create_table "status_pins", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "status_id", null: false
-    t.datetime "created_at", default: -> { "now()" }, null: false
-    t.datetime "updated_at", default: -> { "now()" }, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["account_id", "status_id"], name: "index_status_pins_on_account_id_and_status_id", unique: true
   end
 
@@ -974,6 +969,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
     t.bigint "last_read_notification"
     t.string "unique_email"
     t.string "promoter_auth_token"
+    t.integer "available_boost_post"
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_at"], name: "index_users_on_created_at"
@@ -1061,8 +1057,6 @@ ActiveRecord::Schema.define(version: 2020_10_06_025617) do
   add_foreign_key "poll_votes", "polls", on_delete: :cascade
   add_foreign_key "polls", "accounts", on_delete: :cascade
   add_foreign_key "polls", "statuses", on_delete: :cascade
-  add_foreign_key "report_notes", "accounts", on_delete: :cascade
-  add_foreign_key "report_notes", "reports", on_delete: :cascade
   add_foreign_key "reports", "accounts", column: "action_taken_by_account_id", name: "fk_bca45b75fd", on_delete: :nullify
   add_foreign_key "reports", "accounts", column: "assigned_account_id", on_delete: :nullify
   add_foreign_key "reports", "accounts", column: "target_account_id", name: "fk_eb37af34f0", on_delete: :cascade

@@ -3,7 +3,6 @@
 #
 # Table name: media_attachments
 #
-#  id                     :bigint(8)        not null, primary key
 #  status_id              :bigint(8)
 #  file_file_name         :string
 #  file_content_type      :string
@@ -16,6 +15,7 @@
 #  type                   :integer          default("image"), not null
 #  file_meta              :json
 #  account_id             :bigint(8)
+#  id                     :bigint(8)        not null, primary key
 #  description            :text
 #  scheduled_status_id    :bigint(8)
 #  blurhash               :string

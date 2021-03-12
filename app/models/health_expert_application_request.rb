@@ -3,19 +3,19 @@
 #
 # Table name: health_expert_application_requests
 #
-#  id                             :bigint(8)        not null, primary key
-#  account_id                     :bigint(8)        not null
-#  training_certification         :string
-#  website_url                    :string
-#  facebook_url                   :string
-#  twitter_url                    :string
-#  instagram_url                  :string
-#  telegram_url                   :string
-#  youtube_url                    :string
-#  show_reblogs                   :boolean          default(TRUE), not null
-#  uri                            :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
+#  id                     :bigint(8)        not null, primary key
+#  account_id             :integer          not null
+#  training_certification :string           not null
+#  website_url            :string
+#  facebook_url           :string
+#  twitter_url            :string
+#  instagram_url          :string
+#  telegram_url           :string
+#  youtube_url            :string
+#  show_reblogs           :boolean          default(TRUE), not null
+#  uri                    :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
 #
 
 class HealthExpertApplicationRequest < ApplicationRecord

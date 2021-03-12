@@ -3,7 +3,6 @@
 #
 # Table name: accounts
 #
-#  id                      :bigint(8)        not null, primary key
 #  username                :string           default(""), not null
 #  domain                  :string
 #  secret                  :string           default(""), not null
@@ -36,6 +35,7 @@
 #  shared_inbox_url        :string           default(""), not null
 #  followers_url           :string           default(""), not null
 #  protocol                :integer          default("ostatus"), not null
+#  id                      :bigint(8)        not null, primary key
 #  memorial                :boolean          default(FALSE), not null
 #  moved_to_account_id     :bigint(8)
 #  featured_collection_url :string
@@ -43,14 +43,13 @@
 #  actor_type              :string
 #  discoverable            :boolean
 #  also_known_as           :string           is an Array
-#  silenced_at             :datetime
-#  suspended_at            :datetime
 #  is_pro                  :boolean          default(FALSE), not null
 #  pro_expires_at          :datetime
+#  silenced_at             :datetime
+#  suspended_at            :datetime
 #  is_verified             :boolean          default(FALSE), not null
 #  is_proplus              :boolean          default(FALSE), not null
 #  is_expert               :boolean          default(FALSE), not null
-#  subscription_plan       :string
 #  subscription_id         :string
 #  proplus_expires_at      :datetime
 #
